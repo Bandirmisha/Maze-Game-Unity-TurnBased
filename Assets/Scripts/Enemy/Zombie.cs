@@ -5,7 +5,7 @@ namespace MazeGame
 {
     public class Zombie : Enemy
     {
-        public Zombie() : base()
+        public Zombie(Vector3 startPost) : base(startPost)
         {
             
         }

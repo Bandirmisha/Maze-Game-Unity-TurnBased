@@ -92,8 +92,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3899804023661472495}
-  - component: {fileID: 3146043760932243364}
-  - component: {fileID: -7706940953540269834}
   - component: {fileID: 1735679554541801407}
   - component: {fileID: 1112387134433863470}
   m_Layer: 7
@@ -119,35 +117,6 @@ Transform:
   - {fileID: 1916918077844822866}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3146043760932243364
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3959438600144748695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 444b9188b6c63c94b95a1de683e55684, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position: {x: 0, y: 0, z: 0}
-  HP: 0
-  Quest: 
-  isKeyPicked: 0
-  isMoving: 0
---- !u!114 &-7706940953540269834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3959438600144748695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87b0ae7a37494be44b6bfa1a5050ce0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &1735679554541801407
 BoxCollider:
   m_ObjectHideFlags: 0

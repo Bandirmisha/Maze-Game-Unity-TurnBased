@@ -9,7 +9,7 @@ public class Exit : MonoBehaviour
     {
         if(other.gameObject.layer == 7)
         {
-            GameManager.instance.player.GetComponent<Player>().Quit();
+            ViewModel.instance.playerModel.Quit();
         }
     }
 }

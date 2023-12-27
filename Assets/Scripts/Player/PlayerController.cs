@@ -2,25 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 using UnityEngine.UIElements;
 
 namespace MazeGame
 {
-    public class Controller : MonoBehaviour
+    public class PlayerController : MonoBehaviour
     {
-        private Player player;
-
-        private void Start()
-        {
-            player = GetComponent<Player>();
-        }
+        private PlayerModel player => ViewModel.instance.playerModel;
 
         private void Update()
         {
             if (!player.isMoving)
                 HandleInput();
+            else 
+                player.Move();       
         }
 
         private void HandleInput()
@@ -63,14 +61,14 @@ namespace MazeGame
 
         private bool CheckDestination(Vector3 direction)
         {
-            Vector3 tempPos = player.position + direction;
+            Vector3 tempPos = player.targetPosition + direction;
             
-            var zombies = GameManager.instance.zombies;
-            var skeletons = GameManager.instance.skeletons;
+            var zombies = ViewModel.instance.zombies;
+            var skeletons = ViewModel.instance.skeletons;
 
             for (int i = 0; i < zombies.Count; i++)
             {
-                if (tempPos == zombies[i].GetComponent<Zombie>().position)
+                if (tempPos == zombies[i].targetPosition)
                 {
                     return false;
                 }
@@ -78,13 +76,13 @@ namespace MazeGame
 
             for (int i = 0; i < skeletons.Count; i++)
             {
-                if (tempPos == skeletons[i].GetComponent<Skeleton>().position)
+                if (tempPos == skeletons[i].targetPosition)
                 {
                     return false;
                 }
             }
 
-            if (GameManager.instance.field.field[(int)tempPos.x, (int)tempPos.z*(-1)] == 5)
+            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z*(-1)] == 5)
             {
                 return true;
             }

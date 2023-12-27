@@ -7,7 +7,7 @@ namespace MazeGame
 {
     public class Arrow : MonoBehaviour
     {
-        private Field field => GameManager.instance.field;
+        private Field field => ViewModel.instance.field;
 
         [HideInInspector] public Vector3 direction;
         private bool isStuck;
@@ -63,7 +63,7 @@ namespace MazeGame
             //Если игрок
             if (collision.gameObject.layer == 7)
             {
-                collision.gameObject.GetComponent<Player>().TakeDamage(5);
+                ViewModel.instance.playerModel.TakeDamage(5);
             }
             
             Destroy(this.gameObject);

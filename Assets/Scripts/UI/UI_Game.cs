@@ -2,13 +2,14 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UI_Game : MonoBehaviour
 {
     public Action onPlayerHealthChanged;
     public Action onQuestChanged;
-    private static Player player => GameManager.instance.player.GetComponent<Player>();
+    private static PlayerModel player => ViewModel.instance.playerModel;
 
     [SerializeField] private TextMeshProUGUI healthTextBox;
     [SerializeField] private TextMeshProUGUI questTextBox;
@@ -50,5 +51,6 @@ public class UI_Game : MonoBehaviour
     {
         SceneLoader.LoadScene(id);
     }
+
 
 }

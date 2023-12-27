@@ -5,14 +5,17 @@ namespace MazeGame
 {
     public class Skeleton : Enemy
     {
-        public GameObject arrowPrefab;
-
         [SerializeField] private float shootCooldown;
         private float time;
 
-        protected override void FixedUpdate()
+        public Skeleton(Vector3 startPost) : base(startPost)
         {
-            base.FixedUpdate();
+            shootCooldown = 1f;
+        }
+
+        public override void Event()
+        {
+            base.Event();
 
             if (!alive) return;
 
@@ -26,7 +29,7 @@ namespace MazeGame
 
         public void Shoot()
         {
-            GameManager.instance.CreateGameObject(arrowPrefab, transform.position);
+            ViewModel.instance.view.CreateGameObject(ViewModel.instance.view.arrowPrefab, currentPosition);
         }
 
     }

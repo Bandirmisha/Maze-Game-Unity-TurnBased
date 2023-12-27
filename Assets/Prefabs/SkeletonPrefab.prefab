@@ -266,7 +266,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3348600189374166616}
-  - component: {fileID: 4021868954694378081}
   - component: {fileID: 8642665086160927423}
   m_Layer: 6
   m_Name: SkeletonPrefab
@@ -292,23 +291,6 @@ Transform:
   - {fileID: 4125994938297052133}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4021868954694378081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3829604465462896740}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40b8bb89500a6ff419b8b9c8b9951387, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position: {x: 0, y: 0, z: 0}
-  attackCooldown: 1
-  healthBar: {fileID: 3199943276784453794}
-  arrowPrefab: {fileID: 8757294333523603229, guid: 2d6d2c7768b5d174ba6cab505ac5da50, type: 3}
-  shootCooldown: 1
 --- !u!65 &8642665086160927423
 BoxCollider:
   m_ObjectHideFlags: 0

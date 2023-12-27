@@ -266,6 +266,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 264377265}
+  - component: {fileID: 264377266}
+  - component: {fileID: 264377268}
   - component: {fileID: 264377267}
   m_Layer: 0
   m_Name: GameManager
@@ -289,7 +291,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &264377267
+--- !u!114 &264377266
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -298,7 +300,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 264377264}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5d0a7e727362ef4082a05aba0d1cabd, type: 3}
+  m_Script: {fileID: 11500000, guid: a43c94eaf93b21648bb2b1a2558d82c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 332291348}
@@ -316,6 +318,32 @@ MonoBehaviour:
   exitPrefab: {fileID: 7595159071374843826, guid: 8c885e83bba56744f84098a470a6c56d, type: 3}
   zombiePrefab: {fileID: 1363629220243169498, guid: c4fe1281986c20a42836b3d4b910fd36, type: 3}
   skeletonPrefab: {fileID: 3829604465462896740, guid: 9adfb8778fc1f024b98d66e8a8a1d09e, type: 3}
+  arrowPrefab: {fileID: 8757294333523603229, guid: 2d6d2c7768b5d174ba6cab505ac5da50, type: 3}
+--- !u!114 &264377267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264377264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b0ae7a37494be44b6bfa1a5050ce0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &264377268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264377264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c10ce50427d36164c9d805066781babb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  view: {fileID: 0}
 --- !u!1 &332291347
 GameObject:
   m_ObjectHideFlags: 0

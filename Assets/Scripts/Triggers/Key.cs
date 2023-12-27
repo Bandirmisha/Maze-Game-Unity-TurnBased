@@ -9,7 +9,7 @@ public class Key : MonoBehaviour
     {
         if (other.gameObject.layer == 7)
         {
-            GameManager.instance.player.GetComponent<Player>().PickUpKey();
+            ViewModel.instance.playerModel.PickUpKey();
             Destroy(this.gameObject);
         }
     }

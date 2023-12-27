@@ -6,13 +6,14 @@ using Unity.VisualScripting;
 
 namespace MazeGame
 {
-    public class Enemy : MonoBehaviour, IEnemy
+    public class Enemy : IEnemy
     {
-        private Player player => GameManager.instance.player.GetComponent<Player>();
+        private PlayerModel player => ViewModel.instance.playerModel;
 
-        public Vector3 position;
+        public Vector3 targetPosition;
+        public Vector3 currentPosition;
         private Vector3 animShift;
-        private int HP;
+        public int HP;
         protected bool alive;
         private bool isMoving;
         private bool canAttack;
@@ -20,29 +21,22 @@ namespace MazeGame
         [SerializeField] private float attackCooldown;
         private float currentTime;
 
-        public Slider healthBar;
-
-        private void Start()
+        public Enemy(Vector3 startPos)
         {
-            position = transform.position;
+            currentPosition = startPos;
+            targetPosition = startPos;
 
             HP = 5;
-            healthBar.value = HP;
             alive = true;
 
+            attackCooldown = 1f;
             canAttack = true;
-
         }
 
-        protected virtual void FixedUpdate()
+        public virtual void Event()
         {
             if(!alive)
             {
-                //Проваливание под землю
-                if (transform.position.y > -10f)
-                    transform.position += new Vector3(0, -0.1f, 0);
-                else Destroy(this.gameObject);
-
                 return;
             }
 
@@ -72,33 +66,33 @@ namespace MazeGame
 
         public void Move()
         {
-            if (Vector3.Distance(transform.position, position) > 0.05f)
+            if (Vector3.Distance(currentPosition, targetPosition) > 0.05f)
             {
-                transform.position += animShift;
+                currentPosition += animShift;
             }
             else
             {
-                transform.position = position;
+                currentPosition = targetPosition;
                 isMoving = false;
             }
         }
+
         public void Attack()
         {
             canAttack = false;
-            GameManager.instance.player.GetComponent<Player>().TakeDamage(2);
+            ViewModel.instance.playerModel.TakeDamage(2);
         }
+
         public void TakeDamage(int damage)
         {
             HP -= damage;
-            healthBar.value = HP;
 
             if (HP <= 0)
             {
                 alive = false;
 
-                gameObject.SetActive(false);
-                gameObject.transform.position = new Vector3(-1, -1, -1);
-                position = gameObject.transform.position;
+                currentPosition = new Vector3(0, -1, 0);
+                targetPosition = currentPosition;
 
                 return;
             }
@@ -106,10 +100,10 @@ namespace MazeGame
 
         private bool isPlayerNearby()
         {
-            if (player.position.x == position.x - 1 && player.position.z == position.z ||
-                player.position.x == position.x && player.position.z == position.z - 1 ||
-                player.position.x == position.x + 1 && player.position.z == position.z ||
-                player.position.x == position.x && player.position.z == position.z + 1)
+            if (player.targetPosition.x == targetPosition.x - 1 && player.targetPosition.z == targetPosition.z ||
+                player.targetPosition.x == targetPosition.x && player.targetPosition.z == targetPosition.z - 1 ||
+                player.targetPosition.x == targetPosition.x + 1 && player.targetPosition.z == targetPosition.z ||
+                player.targetPosition.x == targetPosition.x && player.targetPosition.z == targetPosition.z + 1)
                 return true;
             else
                 return false;
@@ -132,7 +126,7 @@ namespace MazeGame
                 if (CheckDestination(direction))
                 {
                     isMoving = true;
-                    position += direction;
+                    targetPosition += direction;
                     animShift = new Vector3(direction.x * 0.03f, direction.y * 0.03f, direction.z * 0.03f);
                     return;
                 }
@@ -143,14 +137,14 @@ namespace MazeGame
 
         private bool CheckDestination(Vector3 direction)
         {
-            Vector3 tempPos = position + direction;
+            Vector3 tempPos = targetPosition + direction;
 
-            var zombies = GameManager.instance.zombies;
-            var skeletons = GameManager.instance.skeletons;
+            var zombies = ViewModel.instance.zombies;
+            var skeletons = ViewModel.instance.skeletons;
 
             for (int i = 0; i < zombies.Count; i++)
             {
-                if (tempPos == zombies[i].GetComponent<Zombie>().position)
+                if (tempPos == zombies[i].targetPosition)
                 {
                     return false;
                 }
@@ -158,18 +152,18 @@ namespace MazeGame
 
             for (int i = 0; i < skeletons.Count; i++)
             {
-                if (tempPos == skeletons[i].GetComponent<Skeleton>().position)
+                if (tempPos == skeletons[i].targetPosition)
                 {
                     return false;
                 }
             }
 
-            if (GameManager.instance.player.GetComponent<Player>().position == tempPos)
+            if (ViewModel.instance.playerModel.targetPosition == tempPos)
             {
                 return false;
             }
             
-            if (GameManager.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)] != 5)
+            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)] != 5)
             {
                 return false;
             }
