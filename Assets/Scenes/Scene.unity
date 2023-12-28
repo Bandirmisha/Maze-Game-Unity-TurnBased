@@ -303,14 +303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a43c94eaf93b21648bb2b1a2558d82c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiManager: {fileID: 332291348}
-  walls: []
-  floors: []
-  player: {fileID: 0}
-  zombies: []
-  skeletons: []
-  key: {fileID: 0}
-  exit: {fileID: 0}
+  <uiManager>k__BackingField: {fileID: 332291348}
   wallPrefab: {fileID: 1749638873183749785, guid: 502a7166ecc716a4b9ea7d438ac81f0a, type: 3}
   floorPrefab: {fileID: 1749638873183749785, guid: a6a3392ab84350542991cc6c54f27ac3, type: 3}
   playerPrefab: {fileID: 3959438600144748695, guid: eaad97468117f404a93087fb3d601115, type: 3}
@@ -343,7 +336,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c10ce50427d36164c9d805066781babb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  view: {fileID: 264377266}
 --- !u!1 &332291347
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,10 +368,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c2f587c87fe3514f893f06b6c7f504a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthTextBox: {fileID: 1986626057}
-  questTextBox: {fileID: 1417759646}
-  PauseMenu: {fileID: 1941572700}
-  GameEndMenu: {fileID: 1859834910}
+  <healthTextBox>k__BackingField: {fileID: 1986626057}
+  <questTextBox>k__BackingField: {fileID: 1417759646}
+  <PauseMenu>k__BackingField: {fileID: 1941572700}
+  <GameEndMenu>k__BackingField: {fileID: 1859834910}
 --- !u!114 &332291349
 MonoBehaviour:
   m_ObjectHideFlags: 0
