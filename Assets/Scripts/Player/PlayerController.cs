@@ -82,7 +82,7 @@ namespace MazeGame
                 }
             }
 
-            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z*(-1)] == 5)
+            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z*(-1)].type == CellType.Floor)
             {
                 return true;
             }

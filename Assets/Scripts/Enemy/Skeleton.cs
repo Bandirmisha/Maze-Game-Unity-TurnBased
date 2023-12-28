@@ -5,8 +5,8 @@ namespace MazeGame
 {
     public class Skeleton : Enemy
     {
-        [SerializeField] private float shootCooldown;
-        private float time;
+        private float shootCooldown { get; }
+        private float time { get; set; }
 
         public Skeleton(Vector3 startPost) : base(startPost)
         {

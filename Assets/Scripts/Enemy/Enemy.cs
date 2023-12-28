@@ -10,16 +10,16 @@ namespace MazeGame
     {
         private PlayerModel player => ViewModel.instance.playerModel;
 
-        public Vector3 targetPosition;
-        public Vector3 currentPosition;
-        private Vector3 animShift;
-        public int HP;
-        protected bool alive;
-        private bool isMoving;
-        private bool canAttack;
+        public Vector3 targetPosition { get; set; }
+        public Vector3 currentPosition { get; set; }
+        private Vector3 animShift { get; set; }
+        public int HP { get; set; }
+        protected bool alive { get; set; }
+        private bool isMoving { get; set; }
+        private bool canAttack { get; set; }
 
-        [SerializeField] private float attackCooldown;
-        private float currentTime;
+        private float attackCooldown { get; }
+        private float currentTime { get; set; }
 
         public Enemy(Vector3 startPos)
         {
@@ -163,7 +163,7 @@ namespace MazeGame
                 return false;
             }
             
-            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)] != 5)
+            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)].type != CellType.Floor)
             {
                 return false;
             }

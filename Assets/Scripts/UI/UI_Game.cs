@@ -11,13 +11,12 @@ public class UI_Game : MonoBehaviour
     public Action onQuestChanged;
     private static PlayerModel player => ViewModel.instance.playerModel;
 
-    [SerializeField] private TextMeshProUGUI healthTextBox;
-    [SerializeField] private TextMeshProUGUI questTextBox;
+    [field: SerializeField] private TextMeshProUGUI healthTextBox { get; set; }
+    [field: SerializeField] private TextMeshProUGUI questTextBox { get; set; }
+    [field: SerializeField] private GameObject PauseMenu { get; set; }
+    [field: SerializeField] private GameObject GameEndMenu { get; set; }
 
-    [SerializeField] private GameObject PauseMenu;
-    [SerializeField] private GameObject GameEndMenu;
-
-    private void OnEnable()
+    private void Awake()
     {
         onPlayerHealthChanged += DrawStats;
         onQuestChanged += DrawStats;

@@ -9,8 +9,7 @@ namespace MazeGame
     {
         private Field field => ViewModel.instance.field;
 
-        [HideInInspector] public Vector3 direction;
-        private bool isStuck;
+        [HideInInspector] public Vector3 direction { get; set; }
 
         private void OnEnable()
         {
@@ -29,7 +28,7 @@ namespace MazeGame
 
                 if (tempPos.x >= 0 && tempPos.z * (-1) >= 0 && tempPos.x < field.width && tempPos.z * (-1) < field.height)
                 {
-                    if (field.field[(int)tempPos.x, (int)tempPos.z * (-1)] == 5)
+                    if (field.field[(int)tempPos.x, (int)tempPos.z * (-1)].type == CellType.Floor)
                     {
                         possibleArrowDirection.Add(directions[i]);
                     }

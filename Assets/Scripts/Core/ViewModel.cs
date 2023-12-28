@@ -7,21 +7,23 @@ namespace MazeGame
 {
     public class ViewModel : MonoBehaviour
     {
-        public static ViewModel instance;
+        public static ViewModel instance { get; set; }
 
-        public View view;
+        [HideInInspector] public View view { get; set; }
 
-        public Field field;
-        
-        [HideInInspector] public PlayerModel playerModel;
-        [HideInInspector] public List<Zombie> zombies;
-        [HideInInspector] public List<Skeleton> skeletons;
+        public Field field { get; set; }
 
-        [HideInInspector] public Action onGameEnd;
+        [HideInInspector] public PlayerModel playerModel { get; set; }
+        [HideInInspector] public List<Zombie> zombies { get; set; }
+        [HideInInspector] public List<Skeleton> skeletons { get; set; }
+
+        [HideInInspector] public Action onGameEnd { get; set; }
 
 
         private void OnEnable()
         {
+            Time.timeScale = 1;
+
             instance = this;
 
             field = new Field();
@@ -30,14 +32,15 @@ namespace MazeGame
             CreateZombies();
             CreateSkeletons();
            
-
-            onGameEnd += BlockControls;
-            onGameEnd += view.uiManager.ShowGameEndMenu;
+            view = GetComponent<View>();
         }
-
+        
         private void Start()
         {
             SetQuest(0);
+
+            onGameEnd += BlockControls;
+            onGameEnd += view.uiManager.ShowGameEndMenu;
         }
 
         private void FixedUpdate()
@@ -46,11 +49,6 @@ namespace MazeGame
                 zombie.Event();
             foreach (Skeleton skeleton in skeletons)
                 skeleton.Event();
-        }
-
-        private void OnDestroy()
-        {
-            Destroy(gameObject);
         }
 
 
@@ -82,7 +80,7 @@ namespace MazeGame
             {
                 vec = new Vector3(UnityEngine.Random.Range(3, field.width), 0, -UnityEngine.Random.Range(3, field.height));
             }
-            while (field.field[(int)vec.x, -(int)vec.z] == 0);
+            while (field.field[(int)vec.x, -(int)vec.z].type == CellType.Wall);
 
             return vec;
         }
@@ -90,6 +88,7 @@ namespace MazeGame
         private void BlockControls()
         {
             Time.timeScale = 0;
+            playerModel.canMove = false;
         }
 
 
@@ -100,6 +99,7 @@ namespace MazeGame
                 case 0: playerModel.Quest = "Найдите ключ"; break;
                 case 1: playerModel.Quest = "Доберитесь до выхода"; break;
             }
+            
             view.uiManager.onQuestChanged.Invoke();
         }
     }

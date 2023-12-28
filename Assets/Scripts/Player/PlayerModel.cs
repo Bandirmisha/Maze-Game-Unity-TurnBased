@@ -9,13 +9,14 @@ namespace MazeGame
 {
     public class PlayerModel 
     {
-        public Vector3 currentPosition;
-        public Vector3 targetPosition;
-        public Vector3 animShift;
-        public int HP;
-        public string Quest;
-        public bool isKeyPicked;
-        public bool isMoving;
+        public Vector3 currentPosition { get; set; }
+        public Vector3 targetPosition { get; set; }
+        public Vector3 animShift { get; set; }
+        public int HP { get; set; }
+        public string Quest { get; set; }
+        public bool isKeyPicked { get; set; }
+        public bool isMoving { get; set; }
+        public bool canMove { get; set; }
 
         public PlayerModel()
         {
@@ -23,12 +24,14 @@ namespace MazeGame
             targetPosition = currentPosition;
             isKeyPicked = false;
             isMoving = false;
-
+            canMove = true;
             HP = 100;
         }
 
         public void Move()
         {
+            if (!canMove) return;
+
             if (Vector3.Distance(currentPosition, targetPosition) > 0.05f)
             {
                 currentPosition += animShift;
@@ -53,7 +56,6 @@ namespace MazeGame
         {
             foreach (Zombie zombie in ViewModel.instance.zombies)
             {
-
                 if (zombie.targetPosition.x == targetPosition.x - 1 && zombie.targetPosition.z == targetPosition.z ||
                     zombie.targetPosition.x == targetPosition.x && zombie.targetPosition.z == targetPosition.z - 1 ||
                     zombie.targetPosition.x == targetPosition.x + 1 && zombie.targetPosition.z == targetPosition.z ||

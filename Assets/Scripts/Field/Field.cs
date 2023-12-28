@@ -5,7 +5,7 @@ namespace MazeGame
 {
     public class Field
     {
-        public int[,] field;
+        public Cell[,] field { get; set; }
         public int width;
         public int height;
 
@@ -19,7 +19,7 @@ namespace MazeGame
             if (width % 2 == 0) { width++; }
             if (height % 2 == 0) { height++; }
 
-            field = new int[width, height];
+            field = new Cell[width, height];
             keyPos = new Vector3(0, 0, 0);
             exitPos = new Vector3(0, 0, 0);
 
@@ -29,7 +29,7 @@ namespace MazeGame
         private void Generate()
         {
             Stack<Cell> backTrack = new();
-            Cell currentCell = new(1, 1);
+            Cell currentCell = new(1, 1, CellType.Floor);
             Cell neighbourCell;
             
             // Заполнение
@@ -40,14 +40,14 @@ namespace MazeGame
                     //Создание границ
                     if (i == 0 || j == 0 || i == width - 1 || j == height - 1 || i % 2 == 0 || j % 2 == 0)
                     {
-                        field[i, j] = 0;
+                        field[i, j] = new(i, j, CellType.Wall);
                     }
-                    else field[i, j] = 1;
+                    else field[i, j] = new(i, j, CellType.FloorCheckbox);
                 }
             }
 
             //Начальная точка посещена
-            field[1, 1] = 5;
+            field[1, 1] = currentCell;
             backTrack.Push(currentCell);
 
             // Нахождение кол-ва всех непосещенных соседей
@@ -69,7 +69,7 @@ namespace MazeGame
                     int x = neigbours[i].X;
                     int y = neigbours[i].Y;
 
-                    if (field[x, y] == 5)
+                    if (field[x, y].type == CellType.Floor)
                     {
                         neigbours.RemoveAt(i);
 
@@ -83,17 +83,17 @@ namespace MazeGame
                     neighbourCell = neigbours[Random.Range(0, neigbours.Count)];
 
                     //Сосед отмечен посещенным
-                    field[neighbourCell.X, neighbourCell.Y] = 5;
+                    field[neighbourCell.X, neighbourCell.Y].type = CellType.Floor;
 
                     //Соединение
                     if (neighbourCell.X > currentCell.X)
-                        field[neighbourCell.X - 1, currentCell.Y] = 5;
+                        field[neighbourCell.X - 1, currentCell.Y].type = CellType.Floor;
                     else if (neighbourCell.X < currentCell.X)
-                        field[currentCell.X - 1, currentCell.Y] = 5;
+                        field[currentCell.X - 1, currentCell.Y].type = CellType.Floor;
                     else if (neighbourCell.Y > currentCell.Y)
-                        field[currentCell.X, neighbourCell.Y - 1] = 5;
+                        field[currentCell.X, neighbourCell.Y - 1].type = CellType.Floor;
                     else if (neighbourCell.Y < currentCell.Y)
-                        field[currentCell.X, currentCell.Y - 1] = 5;
+                        field[currentCell.X, currentCell.Y - 1].type = CellType.Floor;
 
                     //Отслеживание пути следования
                     backTrack.Push(neighbourCell);
@@ -172,17 +172,5 @@ namespace MazeGame
 
             return neigbours;
         }
-
-        private struct Cell
-        {
-            public Cell(int x, int y)
-            {
-                X = x;
-                Y = y;
-            }
-            public int X { get; set; }
-            public int Y { get; set; }
-        }
-
     }
 }
