@@ -23,73 +23,18 @@ namespace MazeGame
 
         private void HandleInput()
         {
-            Vector3 direction;
+            if (Input.GetMouseButtonDown(0))
+                player.Attack();
 
             if (Input.GetKey(KeyCode.W))
-            {
-                direction = new Vector3(0, 0, 1);
-                if (CheckDestination(direction))
-                    player.SetDestination(direction);
-            }
-
+                player.SetDestination(Vector3.forward);
             else if (Input.GetKey(KeyCode.A))
-            {
-                direction = new Vector3(-1, 0, 0);
-                if (CheckDestination(direction))
-                    player.SetDestination(direction);
-            }
-
+                player.SetDestination(Vector3.left);
             else if (Input.GetKey(KeyCode.S))
-            {
-                direction = new Vector3(0, 0, -1);
-                if (CheckDestination(direction))
-                    player.SetDestination(direction);
-            }
-
+                player.SetDestination(Vector3.back);
             else if (Input.GetKey(KeyCode.D))
-            {
-                direction = new Vector3(1, 0, 0);
-                if (CheckDestination(direction))
-                    player.SetDestination(direction);
-            }
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                player.Attack();
-            }
+                player.SetDestination(Vector3.right);
         }
-
-        private bool CheckDestination(Vector3 direction)
-        {
-            Vector3 tempPos = player.targetPosition + direction;
-            
-            var zombies = ViewModel.instance.zombies;
-            var skeletons = ViewModel.instance.skeletons;
-
-            for (int i = 0; i < zombies.Count; i++)
-            {
-                if (tempPos == zombies[i].targetPosition)
-                {
-                    return false;
-                }
-            }
-
-            for (int i = 0; i < skeletons.Count; i++)
-            {
-                if (tempPos == skeletons[i].targetPosition)
-                {
-                    return false;
-                }
-            }
-
-            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z*(-1)].type == CellType.Floor)
-            {
-                return true;
-            }
-            else return false;
-
-        }
-
     }
 }
 

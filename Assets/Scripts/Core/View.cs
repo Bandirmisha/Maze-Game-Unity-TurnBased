@@ -14,43 +14,43 @@ namespace MazeGame
         private Field field => ViewModel.instance.field;
 
         private PlayerModel playerModel => ViewModel.instance.playerModel;
-        private List<Zombie> zombieModels => ViewModel.instance.zombies;
-        private List<Skeleton> skeletonModels => ViewModel.instance.skeletons;
+        private List<Enemy> zombieModels => ViewModel.instance.zombies;
+        private List<Enemy> skeletonModels => ViewModel.instance.skeletons;
 
-        [HideInInspector] public List<GameObject> walls { get; set; }
-        [HideInInspector] public List<GameObject> floors { get; set; }
+        private List<GameObject> walls { get; set; }
+        private List<GameObject> floors { get; set; }
 
-        [HideInInspector] public GameObject player { get; set; }
-        [HideInInspector] public List<GameObject> zombies { get; set; }
-        [HideInInspector] public List<GameObject> skeletons { get; set; }
+        private GameObject player { get; set; }
+        private List<GameObject> zombies { get; set; }
+        private List<GameObject> skeletons { get; set; }
 
-        [HideInInspector] public GameObject key { get; set; }
-        [HideInInspector] public GameObject exit { get; set; }
+        private GameObject key { get; set; }
+        private GameObject exit { get; set; }
 
         //Пустые объекты-родители для группировки
         private static GameObject wallsParent;
-        public static GameObject floorsParent;
+        private static GameObject floorsParent;
 
         //Префабы
         [Space]
         [Header("Окружение")]
-        public GameObject wallPrefab;
-        public GameObject floorPrefab;
+        [SerializeField] private GameObject wallPrefab;
+        [SerializeField] private GameObject floorPrefab;
 
         [Space]
         [Header("Игрок")]
-        public GameObject playerPrefab;
+        [SerializeField] private GameObject playerPrefab;
 
         [Space]
         [Header("Ключевые объекты")]
-        public GameObject keyPrefab;
-        public GameObject exitPrefab;
+        [SerializeField] private GameObject keyPrefab;
+        [SerializeField] private GameObject exitPrefab;
 
         [Space]
         [Header("Враги")]
-        public GameObject zombiePrefab;
-        public GameObject skeletonPrefab;
-        public GameObject arrowPrefab;
+        [SerializeField] private GameObject zombiePrefab;
+        [SerializeField] private GameObject skeletonPrefab;
+        [SerializeField] private GameObject arrowPrefab;
 
         private void Start()
         {

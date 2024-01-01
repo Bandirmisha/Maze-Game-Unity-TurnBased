@@ -7,20 +7,20 @@ namespace MazeGame
 {
     public class ViewModel : MonoBehaviour
     {
-        public static ViewModel instance { get; set; }
+        public static ViewModel instance { get; private set; }
 
-        [HideInInspector] public View view { get; set; }
+        [HideInInspector] public View view { get; private set; }
 
         public Field field { get; set; }
 
-        [HideInInspector] public PlayerModel playerModel { get; set; }
-        [HideInInspector] public List<Zombie> zombies { get; set; }
-        [HideInInspector] public List<Skeleton> skeletons { get; set; }
+        [HideInInspector] public PlayerModel playerModel { get; private set; }
+        [HideInInspector] public List<Enemy> zombies { get; private set; }
+        [HideInInspector] public List<Enemy> skeletons { get; private set; }
 
-        [HideInInspector] public Action onGameEnd { get; set; }
+        [HideInInspector] public Action onGameEnd { get; private set; }
 
 
-        private void OnEnable()
+        private void Awake()
         {
             Time.timeScale = 1;
 
@@ -54,36 +54,25 @@ namespace MazeGame
 
         private void CreateZombies()
         {
-            zombies = new List<Zombie>();
+            zombies = new List<Enemy>();
             int zombieCount = UnityEngine.Random.Range(5, 10);
             for (int i = 0; i < zombieCount; i++)
             {
-                zombies.Add(new Zombie(GetEnemyStartPos()));
+                zombies.Add(new Zombie());
             }
         }
 
         private void CreateSkeletons()
         {
-            skeletons = new List<Skeleton>();
+            skeletons = new List<Enemy>();
             int skeletonCount = UnityEngine.Random.Range(3, 6);
             for (int i = 0; i < skeletonCount; i++)
             {
-                skeletons.Add(new Skeleton(GetEnemyStartPos()));
+                skeletons.Add(new Skeleton());
             }
         }
 
-        private Vector3 GetEnemyStartPos()
-        {
-            Vector3 vec;
-
-            do
-            {
-                vec = new Vector3(UnityEngine.Random.Range(3, field.width), 0, -UnityEngine.Random.Range(3, field.height));
-            }
-            while (field.field[(int)vec.x, -(int)vec.z].type == CellType.Wall);
-
-            return vec;
-        }
+        
 
         private void BlockControls()
         {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SceneLoader : MonoBehaviour
+public class SceneLoader
 {
     public static void LoadScene(int id)
     {

@@ -9,9 +9,9 @@ namespace MazeGame
 {
     public class PlayerModel 
     {
-        public Vector3 currentPosition { get; set; }
-        public Vector3 targetPosition { get; set; }
-        public Vector3 animShift { get; set; }
+        public Vector3 currentPosition { get; private set; }
+        public Vector3 targetPosition { get; private set; }
+        private Vector3 animShift { get; set; }
         public int HP { get; set; }
         public string Quest { get; set; }
         public bool isKeyPicked { get; set; }
@@ -45,34 +45,39 @@ namespace MazeGame
 
         public void SetDestination(Vector3 direction)
         {
+            if (!CheckDestination(direction))
+                return;
+
             isMoving = true;
             targetPosition += direction;
             animShift = new Vector3(direction.x * 0.05f, direction.y * 0.05f, direction.z * 0.05f);
         }
 
-        
+        private bool CheckDestination(Vector3 direction)
+        {
+            Vector3 tempPos = targetPosition + direction;
+
+            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)].type == CellType.Floor)
+            {
+                if (ViewModel.instance.zombies.Concat(ViewModel.instance.skeletons).Any(x => x.targetPosition == tempPos))
+                    return false;
+                
+                return true;
+            }
+
+            return false;
+        }
 
         public void Attack()
         {
-            foreach (Zombie zombie in ViewModel.instance.zombies)
+            foreach (Enemy enemy in ViewModel.instance.zombies.Concat(ViewModel.instance.skeletons))
             {
-                if (zombie.targetPosition.x == targetPosition.x - 1 && zombie.targetPosition.z == targetPosition.z ||
-                    zombie.targetPosition.x == targetPosition.x && zombie.targetPosition.z == targetPosition.z - 1 ||
-                    zombie.targetPosition.x == targetPosition.x + 1 && zombie.targetPosition.z == targetPosition.z ||
-                    zombie.targetPosition.x == targetPosition.x && zombie.targetPosition.z == targetPosition.z + 1)
+                if (enemy.targetPosition.x == targetPosition.x - 1 && enemy.targetPosition.z == targetPosition.z ||
+                    enemy.targetPosition.x == targetPosition.x && enemy.targetPosition.z == targetPosition.z - 1 ||
+                    enemy.targetPosition.x == targetPosition.x + 1 && enemy.targetPosition.z == targetPosition.z ||
+                    enemy.targetPosition.x == targetPosition.x && enemy.targetPosition.z == targetPosition.z + 1)
                 {
-                    zombie.TakeDamage(1);
-                }
-            }
-
-            foreach (Skeleton skeleton in ViewModel.instance.skeletons)
-            {
-                if (skeleton.targetPosition.x == targetPosition.x - 1 && skeleton.targetPosition.z == targetPosition.z ||
-                    skeleton.targetPosition.x == targetPosition.x && skeleton.targetPosition.z == targetPosition.z - 1 ||
-                    skeleton.targetPosition.x == targetPosition.x + 1 && skeleton.targetPosition.z == targetPosition.z ||
-                    skeleton.targetPosition.x == targetPosition.x && skeleton.targetPosition.z == targetPosition.z + 1)
-                {
-                    skeleton.TakeDamage(1);
+                    enemy.TakeDamage(1);
                 }
             }
         }

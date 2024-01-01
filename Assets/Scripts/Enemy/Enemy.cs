@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.AI;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using System.Linq;
 
 namespace MazeGame
 {
@@ -11,8 +12,8 @@ namespace MazeGame
         private PlayerModel player => ViewModel.instance.playerModel;
 
         public Vector3 targetPosition { get; set; }
-        public Vector3 currentPosition { get; set; }
-        private Vector3 animShift { get; set; }
+        public Vector3 currentPosition { get; private set; }
+        private Vector3 AnimShift { get; set; }
         public int HP { get; set; }
         protected bool alive { get; set; }
         private bool isMoving { get; set; }
@@ -21,8 +22,9 @@ namespace MazeGame
         private float attackCooldown { get; }
         private float currentTime { get; set; }
 
-        public Enemy(Vector3 startPos)
+        public Enemy()
         {
+            Vector3 startPos = GetStartPos();
             currentPosition = startPos;
             targetPosition = startPos;
 
@@ -42,7 +44,7 @@ namespace MazeGame
 
             if (!canAttack)
             {
-                currentTime += Time.deltaTime;
+                currentTime += Time.fixedDeltaTime;
                 if (currentTime >= attackCooldown)
                 {
                     currentTime = 0;
@@ -64,11 +66,24 @@ namespace MazeGame
                 SetRandomDestination();
         }
 
+        private Vector3 GetStartPos()
+        {
+            Vector3 vec;
+
+            do
+            {
+                vec = new Vector3(UnityEngine.Random.Range(3,ViewModel.instance.field.width), 0, -UnityEngine.Random.Range(3, ViewModel.instance.field.height));
+            }
+            while (ViewModel.instance.field.field[(int)vec.x, -(int)vec.z].type == CellType.Wall);
+
+            return vec;
+        }
+
         public void Move()
         {
             if (Vector3.Distance(currentPosition, targetPosition) > 0.05f)
             {
-                currentPosition += animShift;
+                currentPosition += AnimShift;
             }
             else
             {
@@ -111,67 +126,53 @@ namespace MazeGame
 
         private void SetRandomDestination()
         {
-            int iter = 0;
-            while (iter<10)
+            List<Vector3> directions = new()
             {
-                Vector3 direction = Random.Range(0, 4) switch
+                Vector3.back,
+                Vector3.forward,
+                Vector3.left,
+                Vector3.right,
+            };
+
+            List<Vector3> possibleDirection = new();
+            for (int i = 0; i < directions.Count; i++)
+            {
+                if (CheckDestination(directions[i]))
+                    possibleDirection.Add(directions[i]);
+            }
+
+            if (possibleDirection.Count > 0)
+            {
+                var direction = Random.Range(0, possibleDirection.Count) switch
                 {
-                    0 => new Vector3(0, 0, 1),
-                    1 => new Vector3(-1, 0, 0),
-                    2 => new Vector3(0, 0, -1),
-                    3 => new Vector3(1, 0, 0),
-                    _ => throw new System.NotImplementedException()
+                    0 => possibleDirection[0],
+                    1 => possibleDirection[1],
+                    2 => possibleDirection[2],
+                    3 => possibleDirection[3],
+                    _ => throw new System.NotImplementedException(),
                 };
 
-                if (CheckDestination(direction))
-                {
-                    isMoving = true;
-                    targetPosition += direction;
-                    animShift = new Vector3(direction.x * 0.03f, direction.y * 0.03f, direction.z * 0.03f);
-                    return;
-                }
-
-                iter++;
+                isMoving = true;
+                targetPosition += direction;
+                AnimShift = new Vector3(direction.x * 0.03f, direction.y * 0.03f, direction.z * 0.03f);
             }
+
         }
 
         private bool CheckDestination(Vector3 direction)
         {
             Vector3 tempPos = targetPosition + direction;
 
-            var zombies = ViewModel.instance.zombies;
-            var skeletons = ViewModel.instance.skeletons;
-
-            for (int i = 0; i < zombies.Count; i++)
+            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)].type == CellType.Floor)
             {
-                if (tempPos == zombies[i].targetPosition)
-                {
+                if (ViewModel.instance.zombies.Concat(ViewModel.instance.skeletons).Any(x => x.targetPosition == tempPos) ||
+                    ViewModel.instance.playerModel.targetPosition == tempPos)
                     return false;
-                }
+
+                return true;
             }
 
-            for (int i = 0; i < skeletons.Count; i++)
-            {
-                if (tempPos == skeletons[i].targetPosition)
-                {
-                    return false;
-                }
-            }
-
-            if (ViewModel.instance.playerModel.targetPosition == tempPos)
-            {
-                return false;
-            }
-            
-            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)].type != CellType.Floor)
-            {
-                return false;
-            }
-
-            return true;
-
-        }
-
-        
+            return false;
+        } 
     }
 }

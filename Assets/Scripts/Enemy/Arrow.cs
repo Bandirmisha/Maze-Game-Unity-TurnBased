@@ -13,12 +13,17 @@ namespace MazeGame
 
         private void OnEnable()
         {
+            SetRandomDirection();
+        }
+
+        private void SetRandomDirection()
+        {
             List<Vector3> directions = new()
             {
-                new Vector3(0, 0, 1),
-                new Vector3(-1, 0, 0),
-                new Vector3(0, 0, -1),
-                new Vector3(1, 0, 0)
+                Vector3.back,
+                Vector3.forward,
+                Vector3.left,
+                Vector3.right,
             };
 
             List<Vector3> possibleArrowDirection = new();
@@ -43,7 +48,6 @@ namespace MazeGame
                 3 => possibleArrowDirection[3],
                 _ => throw new System.NotImplementedException(),
             };
-
         }
 
 
@@ -54,7 +58,7 @@ namespace MazeGame
 
         public void Move()
         {
-            transform.position += direction * 4f * Time.deltaTime;
+            transform.position += direction * 4f * Time.fixedDeltaTime;
         }
 
         private void OnCollisionEnter(Collision collision)

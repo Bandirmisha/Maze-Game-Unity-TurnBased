@@ -8,7 +8,7 @@ namespace MazeGame
         private float shootCooldown { get; }
         private float time { get; set; }
 
-        public Skeleton(Vector3 startPost) : base(startPost)
+        public Skeleton()
         {
             shootCooldown = 1f;
         }
@@ -19,7 +19,7 @@ namespace MazeGame
 
             if (!alive) return;
 
-            time += Time.deltaTime;
+            time += Time.fixedDeltaTime;
             if (time >= shootCooldown)
             {
                 time = 0;
@@ -29,7 +29,7 @@ namespace MazeGame
 
         public void Shoot()
         {
-            ViewModel.instance.view.CreateGameObject(ViewModel.instance.view.arrowPrefab, currentPosition);
+            //ViewModel.instance.view.CreateGameObject(ViewModel.instance.view.arrowPrefab, currentPosition);
         }
 
     }
