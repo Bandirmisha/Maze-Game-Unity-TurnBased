@@ -7,33 +7,17 @@ using UnityEngine.UI;
 
 public class UI_Game : MonoBehaviour
 {
-    public Action onPlayerHealthChanged;
-    public Action onQuestChanged;
-    private static PlayerModel player => ViewModel.instance.playerModel;
 
     [field: SerializeField] private TextMeshProUGUI healthTextBox { get; set; }
     [field: SerializeField] private TextMeshProUGUI questTextBox { get; set; }
     [field: SerializeField] private GameObject PauseMenu { get; set; }
     [field: SerializeField] private GameObject GameEndMenu { get; set; }
 
-    private void Awake()
-    {
-        onPlayerHealthChanged += DrawStats;
-        onQuestChanged += DrawStats;
-    }
 
-    private void Update()
+    public void DrawStats(string health, string quest)
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            PauseMenuSwitchView();
-        }
-    }
-
-    public void DrawStats()
-    {
-        healthTextBox.text = "Здоровье: " + player.HP;
-        questTextBox.text = "Задание: " + player.Quest;
+        healthTextBox.text = "Здоровье: " + health;
+        questTextBox.text = "Задание: " + quest;
     }
 
     public void PauseMenuSwitchView()
@@ -50,6 +34,5 @@ public class UI_Game : MonoBehaviour
     {
         SceneLoader.LoadScene(id);
     }
-
 
 }

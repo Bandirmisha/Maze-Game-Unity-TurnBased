@@ -9,7 +9,7 @@ namespace MazeGame
 {
     public class Enemy : IEnemy
     {
-        private PlayerModel player => ViewModel.instance.playerModel;
+        protected Model model => Model.inst;
 
         public Vector3 targetPosition { get; set; }
         public Vector3 currentPosition { get; private set; }
@@ -22,9 +22,8 @@ namespace MazeGame
         private float attackCooldown { get; }
         private float currentTime { get; set; }
 
-        public Enemy()
+        public Enemy(Vector3 startPos)
         {
-            Vector3 startPos = GetStartPos();
             currentPosition = startPos;
             targetPosition = startPos;
 
@@ -44,7 +43,7 @@ namespace MazeGame
 
             if (!canAttack)
             {
-                currentTime += Time.fixedDeltaTime;
+                currentTime += Time.deltaTime;
                 if (currentTime >= attackCooldown)
                 {
                     currentTime = 0;
@@ -52,8 +51,7 @@ namespace MazeGame
                 }
             }
 
-
-            if (isPlayerNearby() && !isMoving)
+            if (model.isPlayerNearby(targetPosition) && !isMoving)
             {
                 if (canAttack)
                     Attack();
@@ -66,18 +64,7 @@ namespace MazeGame
                 SetRandomDestination();
         }
 
-        private Vector3 GetStartPos()
-        {
-            Vector3 vec;
-
-            do
-            {
-                vec = new Vector3(UnityEngine.Random.Range(3,ViewModel.instance.field.width), 0, -UnityEngine.Random.Range(3, ViewModel.instance.field.height));
-            }
-            while (ViewModel.instance.field.field[(int)vec.x, -(int)vec.z].type == CellType.Wall);
-
-            return vec;
-        }
+       
 
         public void Move()
         {
@@ -95,7 +82,7 @@ namespace MazeGame
         public void Attack()
         {
             canAttack = false;
-            ViewModel.instance.playerModel.TakeDamage(2);
+            model.PlayerTakeDamage(2);
         }
 
         public void TakeDamage(int damage)
@@ -113,16 +100,6 @@ namespace MazeGame
             }
         }
 
-        private bool isPlayerNearby()
-        {
-            if (player.targetPosition.x == targetPosition.x - 1 && player.targetPosition.z == targetPosition.z ||
-                player.targetPosition.x == targetPosition.x && player.targetPosition.z == targetPosition.z - 1 ||
-                player.targetPosition.x == targetPosition.x + 1 && player.targetPosition.z == targetPosition.z ||
-                player.targetPosition.x == targetPosition.x && player.targetPosition.z == targetPosition.z + 1)
-                return true;
-            else
-                return false;
-        }
 
         private void SetRandomDestination()
         {
@@ -137,42 +114,21 @@ namespace MazeGame
             List<Vector3> possibleDirection = new();
             for (int i = 0; i < directions.Count; i++)
             {
-                if (CheckDestination(directions[i]))
+                if (model.CheckDestination(targetPosition,directions[i]))
                     possibleDirection.Add(directions[i]);
             }
 
             if (possibleDirection.Count > 0)
             {
-                var direction = Random.Range(0, possibleDirection.Count) switch
-                {
-                    0 => possibleDirection[0],
-                    1 => possibleDirection[1],
-                    2 => possibleDirection[2],
-                    3 => possibleDirection[3],
-                    _ => throw new System.NotImplementedException(),
-                };
+                var direction = possibleDirection[Random.Range(0, possibleDirection.Count)];
 
                 isMoving = true;
                 targetPosition += direction;
-                AnimShift = new Vector3(direction.x * 0.03f, direction.y * 0.03f, direction.z * 0.03f);
+                AnimShift = new Vector3(direction.x * 0.01f, direction.y * 0.01f, direction.z * 0.01f);
             }
 
         }
 
-        private bool CheckDestination(Vector3 direction)
-        {
-            Vector3 tempPos = targetPosition + direction;
-
-            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)].type == CellType.Floor)
-            {
-                if (ViewModel.instance.zombies.Concat(ViewModel.instance.skeletons).Any(x => x.targetPosition == tempPos) ||
-                    ViewModel.instance.playerModel.targetPosition == tempPos)
-                    return false;
-
-                return true;
-            }
-
-            return false;
-        } 
+        
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using System;
+using Unity.VisualScripting;
+
 
 namespace MazeGame
 {
@@ -9,15 +11,13 @@ namespace MazeGame
     {
         public static ViewModel instance { get; private set; }
 
-        [HideInInspector] public View view { get; private set; }
+        private View view { get; set; }
+        private Model model { get; set; }
 
-        public Field field { get; set; }
-
-        [HideInInspector] public PlayerModel playerModel { get; private set; }
-        [HideInInspector] public List<Enemy> zombies { get; private set; }
-        [HideInInspector] public List<Enemy> skeletons { get; private set; }
-
+        [HideInInspector] public Action<KeyCode> onInputAction { get; private set; }
+        [HideInInspector] private Action onGameMenuStateChanged { get; set; }
         [HideInInspector] public Action onGameEnd { get; private set; }
+
 
 
         private void Awake()
@@ -26,70 +26,59 @@ namespace MazeGame
 
             instance = this;
 
-            field = new Field();
-
-            playerModel = new PlayerModel();
-            CreateZombies();
-            CreateSkeletons();
-           
+            model = new Model();
             view = GetComponent<View>();
+
+            onInputAction += InputAction;
         }
-        
+
         private void Start()
         {
-            SetQuest(0);
-
-            onGameEnd += BlockControls;
+            onGameEnd += GameOver;
             onGameEnd += view.uiManager.ShowGameEndMenu;
+
+            onGameMenuStateChanged += view.uiManager.PauseMenuSwitchView;
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
-            foreach (Zombie zombie in zombies)
-                zombie.Event();
-            foreach (Skeleton skeleton in skeletons)
-                skeleton.Event();
+            model.Tick();
         }
 
 
-        private void CreateZombies()
+        public void InputAction(KeyCode key)
         {
-            zombies = new List<Enemy>();
-            int zombieCount = UnityEngine.Random.Range(5, 10);
-            for (int i = 0; i < zombieCount; i++)
-            {
-                zombies.Add(new Zombie());
-            }
+            if (key == KeyCode.Escape)
+                onGameMenuStateChanged.Invoke();
+
+            model.PlayerInputAction(key);
         }
 
-        private void CreateSkeletons()
+
+        public StaticRenderData GetStaticRenderData()
         {
-            skeletons = new List<Enemy>();
-            int skeletonCount = UnityEngine.Random.Range(3, 6);
-            for (int i = 0; i < skeletonCount; i++)
-            {
-                skeletons.Add(new Skeleton());
-            }
+            return new StaticRenderData(model.mazeWidth,
+                                        model.mazeHeight,
+                                        model.Field,
+                                        model.keyPos,
+                                        model.exitPos);
         }
 
-        
+        public RealtimeRenderData GetRealtimeRenderData()
+        {
+            return new RealtimeRenderData(model.playerHP,
+                                          model.quest,
+                                          model.isKeyPicked,
+                                          model.playerCurrentPosition,
+                                          model.GetZombiesRenderData(),
+                                          model.GetSkeletonsRenderData(),
+                                          model.GetArrowsCurrentPositions());
+        }
 
-        private void BlockControls()
+
+        private void GameOver()
         {
             Time.timeScale = 0;
-            playerModel.canMove = false;
-        }
-
-
-        public void SetQuest(int index)
-        {
-            switch (index)
-            {
-                case 0: playerModel.Quest = "Найдите ключ"; break;
-                case 1: playerModel.Quest = "Доберитесь до выхода"; break;
-            }
-            
-            view.uiManager.onQuestChanged.Invoke();
         }
     }
 }

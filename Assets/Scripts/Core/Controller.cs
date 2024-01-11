@@ -9,31 +9,28 @@ using UnityEngine.UIElements;
 
 namespace MazeGame
 {
-    public class PlayerController : MonoBehaviour
+    public class Controller : MonoBehaviour
     {
-        private PlayerModel player => ViewModel.instance.playerModel;
+        private ViewModel vm => ViewModel.instance;
 
         private void Update()
         {
-            if (!player.isMoving)
-                HandleInput();
-            else 
-                player.Move();       
+            HandleInput();
         }
 
         private void HandleInput()
         {
             if (Input.GetMouseButtonDown(0))
-                player.Attack();
-
+                vm.onInputAction.Invoke(KeyCode.Mouse0);
+         
             if (Input.GetKey(KeyCode.W))
-                player.SetDestination(Vector3.forward);
+                vm.onInputAction.Invoke(KeyCode.W);
             else if (Input.GetKey(KeyCode.A))
-                player.SetDestination(Vector3.left);
+                vm.onInputAction.Invoke(KeyCode.A);
             else if (Input.GetKey(KeyCode.S))
-                player.SetDestination(Vector3.back);
+                vm.onInputAction.Invoke(KeyCode.S);
             else if (Input.GetKey(KeyCode.D))
-                player.SetDestination(Vector3.right);
+                vm.onInputAction.Invoke(KeyCode.D);
         }
     }
 }

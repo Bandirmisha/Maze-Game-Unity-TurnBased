@@ -7,6 +7,6 @@ public class CameraFollow : MonoBehaviour
 {
     void Update()
     {
-        transform.position = ViewModel.instance.playerModel.currentPosition + new Vector3(0, 11, -2);
+        transform.position = ViewModel.instance.GetRealtimeRenderData().playerPosition + new Vector3(0, 11, -2);
     }
 }

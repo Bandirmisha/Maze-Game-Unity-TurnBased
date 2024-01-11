@@ -114,7 +114,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6552139776511241500}
-  - component: {fileID: -196214941799252899}
   - component: {fileID: 5564393906996999878}
   m_Layer: 8
   m_Name: ArrowPrefab
@@ -139,19 +138,6 @@ Transform:
   - {fileID: 171718612610080591}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-196214941799252899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8757294333523603229}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d46c919e68d2f4c4ab738fa7da4612ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  direction: {x: 0, y: 0, z: 0}
 --- !u!54 &5564393906996999878
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -176,7 +176,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1784059007146353373}
   - component: {fileID: 2560552259321937689}
-  - component: {fileID: 2927448022107736669}
   m_Layer: 0
   m_Name: KeyPrefab
   m_TagString: Untagged
@@ -226,18 +225,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.21, y: 0.04, z: 0.26}
   m_Center: {x: 0, y: 0.48, z: -0.18}
---- !u!114 &2927448022107736669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6518478674002719828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ac69aa3d997d214d83f33f71832a593, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7073355627197260065
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SceneLoader
+public static class SceneLoader
 {
     public static void LoadScene(int id)
     {

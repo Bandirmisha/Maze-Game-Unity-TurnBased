@@ -7,8 +7,10 @@ using UnityEngine.UIElements;
 
 namespace MazeGame
 {
-    public class PlayerModel 
+    public class Player 
     {
+        private Model model => Model.inst;
+
         public Vector3 currentPosition { get; private set; }
         public Vector3 targetPosition { get; private set; }
         private Vector3 animShift { get; set; }
@@ -18,7 +20,7 @@ namespace MazeGame
         public bool isMoving { get; set; }
         public bool canMove { get; set; }
 
-        public PlayerModel()
+        public Player()
         {
             currentPosition = new Vector3(1, 0, -1);
             targetPosition = currentPosition;
@@ -26,8 +28,27 @@ namespace MazeGame
             isMoving = false;
             canMove = true;
             HP = 100;
+
+            SetQuest(0);
         }
 
+        public void SetQuest(int index)
+        {
+            switch (index)
+            {
+                case 0: Quest = "Найдите ключ"; break;
+                case 1: Quest = "Доберитесь до выхода"; break;
+            }
+        }
+        public void SetDestination(Vector3 direction)
+        {
+            if (!model.CheckDestination(targetPosition, direction))
+                return;
+
+            isMoving = true;
+            targetPosition += direction;
+            animShift = new Vector3(direction.x * 0.05f, direction.y * 0.05f, direction.z * 0.05f);
+        }
         public void Move()
         {
             if (!canMove) return;
@@ -41,47 +62,25 @@ namespace MazeGame
                 currentPosition = targetPosition;
                 isMoving = false;
             }
+
+            if(currentPosition == model.keyPos)
+                PickUpKey();
+            if (currentPosition == model.exitPos)
+                Quit();
         }
 
-        public void SetDestination(Vector3 direction)
-        {
-            if (!CheckDestination(direction))
-                return;
-
-            isMoving = true;
-            targetPosition += direction;
-            animShift = new Vector3(direction.x * 0.05f, direction.y * 0.05f, direction.z * 0.05f);
-        }
-
-        private bool CheckDestination(Vector3 direction)
-        {
-            Vector3 tempPos = targetPosition + direction;
-
-            if (ViewModel.instance.field.field[(int)tempPos.x, (int)tempPos.z * (-1)].type == CellType.Floor)
-            {
-                if (ViewModel.instance.zombies.Concat(ViewModel.instance.skeletons).Any(x => x.targetPosition == tempPos))
-                    return false;
-                
-                return true;
-            }
-
-            return false;
-        }
+ 
 
         public void Attack()
         {
-            foreach (Enemy enemy in ViewModel.instance.zombies.Concat(ViewModel.instance.skeletons))
+            foreach (var enemyInfo in model.GetZombiesRenderData().Concat(model.GetSkeletonsRenderData()))
             {
-                if (enemy.targetPosition.x == targetPosition.x - 1 && enemy.targetPosition.z == targetPosition.z ||
-                    enemy.targetPosition.x == targetPosition.x && enemy.targetPosition.z == targetPosition.z - 1 ||
-                    enemy.targetPosition.x == targetPosition.x + 1 && enemy.targetPosition.z == targetPosition.z ||
-                    enemy.targetPosition.x == targetPosition.x && enemy.targetPosition.z == targetPosition.z + 1)
+                if (model.isPlayerNearby(enemyInfo.EnemyPosition))
                 {
-                    enemy.TakeDamage(1);
+                    model.EnemyTakeDamage(enemyInfo.EnemyPosition, 1);
                 }
             }
         }
-
         public void TakeDamage(int damage)
         {
             HP -= damage;
@@ -91,20 +90,20 @@ namespace MazeGame
                 ViewModel.instance.onGameEnd.Invoke();
                 return;
             }
-
-            ViewModel.instance.view.uiManager.onPlayerHealthChanged.Invoke();
         }
+
+
 
         public void PickUpKey()
         {
             isKeyPicked = true;
-            ViewModel.instance.SetQuest(1);
+            SetQuest(1);
         }
-
         public void Quit()
         {
             if(isKeyPicked)
             {
+                canMove = false;
                 ViewModel.instance.onGameEnd.Invoke();
             }
             else
@@ -112,6 +111,5 @@ namespace MazeGame
                 Debug.Log("Нужно найти ключ!");
             }
         }
-
     }
 }

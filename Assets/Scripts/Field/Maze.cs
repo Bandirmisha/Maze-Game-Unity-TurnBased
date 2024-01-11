@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MazeGame
 {
-    public class Field
+    public class Maze
     {
         public Cell[,] field { get; set; }
         public int width;
@@ -12,7 +12,7 @@ namespace MazeGame
         public Vector3 keyPos;
         public Vector3 exitPos;
 
-        public Field()
+        public Maze()
         {
             width = Random.Range(35, 50);
             height = Random.Range(15, 25);

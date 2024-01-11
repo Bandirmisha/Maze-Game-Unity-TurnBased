@@ -1,7 +1,4 @@
-using MazeGame;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,29 +6,30 @@ namespace MazeGame
 {
     public class View : MonoBehaviour
     {
+        private ViewModel viewModel => ViewModel.instance;
         [field: SerializeField] public UI_Game uiManager { get; private set; }
+        private StaticRenderData staticRD { get; set; }
+        private RealtimeRenderData realtimeRD { get; set; }
 
-        private Field field => ViewModel.instance.field;
-
-        private PlayerModel playerModel => ViewModel.instance.playerModel;
-        private List<Enemy> zombieModels => ViewModel.instance.zombies;
-        private List<Enemy> skeletonModels => ViewModel.instance.skeletons;
-
+        #region Игровые объекты 
         private List<GameObject> walls { get; set; }
         private List<GameObject> floors { get; set; }
 
-        private GameObject player { get; set; }
-        private List<GameObject> zombies { get; set; }
-        private List<GameObject> skeletons { get; set; }
+        private GameObject playerGameObject { get; set; }
+        private List<GameObject> zombiesGameObjects { get; set; }
+        private List<GameObject> skeletonsGameObjects { get; set; }
+        private List<GameObject> arrowsGameObjects { get; set; }
 
         private GameObject key { get; set; }
         private GameObject exit { get; set; }
+        #endregion
 
-        //Пустые объекты-родители для группировки
+        #region Пустые объекты-родители для группировки
         private static GameObject wallsParent;
         private static GameObject floorsParent;
+        #endregion
 
-        //Префабы
+        #region Префабы
         [Space]
         [Header("Окружение")]
         [SerializeField] private GameObject wallPrefab;
@@ -51,6 +49,7 @@ namespace MazeGame
         [SerializeField] private GameObject zombiePrefab;
         [SerializeField] private GameObject skeletonPrefab;
         [SerializeField] private GameObject arrowPrefab;
+        #endregion
 
         private void Start()
         {
@@ -61,73 +60,99 @@ namespace MazeGame
 
             walls = new List<GameObject>();
             floors = new List<GameObject>();
-            zombies = new List<GameObject>();
-            skeletons = new List<GameObject>();
+            zombiesGameObjects = new List<GameObject>();
+            skeletonsGameObjects = new List<GameObject>();
+            arrowsGameObjects = new List<GameObject>();
 
-            CreateInvironment();
-            key = CreateGameObject(keyPrefab, field.keyPos);
-            exit = CreateGameObject(exitPrefab, field.exitPos);
+            staticRD = viewModel.GetStaticRenderData();
+            realtimeRD = viewModel.GetRealtimeRenderData();
 
-            player = CreateGameObject(playerPrefab, playerModel.currentPosition);
+            CreateEnvironment();
+            key = CreateGameObject(keyPrefab, staticRD.keyPosition);
+            exit = CreateGameObject(exitPrefab, staticRD.exitPosition);
+
+            playerGameObject = CreateGameObject(playerPrefab, realtimeRD.playerPosition);
             CreateZombies();
             CreateSkeletons();
         }
 
         private void Update()
         {
-            player.transform.position = playerModel.currentPosition;
+            realtimeRD = viewModel.GetRealtimeRenderData();
 
-            for (int i = 0; i < zombieModels.Count; i++)
-            {
-                zombies[i].transform.position = zombieModels[i].currentPosition;
-                zombies[i].GetComponentInChildren<Slider>().value = zombieModels[i].HP;
-            }
+            UpdatePlayerData();
+            UpdateEnemiesData();
+            UpdateArrowsData();
 
-            for (int i = 0; i < skeletonModels.Count; i++)
-            {
-                skeletons[i].transform.position = skeletonModels[i].currentPosition;
-                skeletons[i].GetComponentInChildren<Slider>().value = skeletonModels[i].HP;
-            }
+            if (key && realtimeRD.isKeyPicked)
+                Destroy(key);
         }
-
-        private void CreateInvironment()
+        private void UpdatePlayerData()
         {
-            for (int j = 0; j < field.height; j++)
+            uiManager.DrawStats(realtimeRD.playerHP, realtimeRD.quest);
+            playerGameObject.transform.position = realtimeRD.playerPosition;
+        }
+        private void UpdateEnemiesData()
+        {
+            for (int i = 0; i < realtimeRD.zombiesRD.Count; i++)
             {
-                for (int i = 0; i < field.width; i++)
+                zombiesGameObjects[i].transform.position = realtimeRD.zombiesRD[i].EnemyPosition;
+                zombiesGameObjects[i].GetComponentInChildren<Slider>().value = realtimeRD.zombiesRD[i].EnemyHP;
+            }
+
+            for (int i = 0; i < realtimeRD.skeletonsRD.Count; i++)
+            {
+                skeletonsGameObjects[i].transform.position = realtimeRD.skeletonsRD[i].EnemyPosition;
+                skeletonsGameObjects[i].GetComponentInChildren<Slider>().value = realtimeRD.skeletonsRD[i].EnemyHP;
+            }
+        }
+        private void UpdateArrowsData()
+        {
+            for (int i = 0; i < realtimeRD.arrowsPositions.Count; i++)
+            {
+                if (i > arrowsGameObjects.Count - 1)
+                    arrowsGameObjects.Add(CreateGameObject(arrowPrefab, realtimeRD.arrowsPositions[i]));
+
+                if (realtimeRD.arrowsPositions[i].y < 0)
                 {
-                    //Стены
-                    if (field.field[i, j].type == CellType.Wall)
-                    {
-                        walls.Add(CreateGameObject(wallPrefab, new Vector3(i, 0, -j)));
-                        walls[walls.Count - 1].transform.SetParent(wallsParent.transform);
-                    }
-                    //Проход
-                    else if (field.field[i, j].type == CellType.Floor)
-                    {
-                        floors.Add(CreateGameObject(floorPrefab, new Vector3(i, 0, -j)));
-                        floors[floors.Count - 1].transform.SetParent(floorsParent.transform);
-                    }
+                    Destroy(arrowsGameObjects[i]);
+                    arrowsGameObjects[i] = null;
                 }
+
+                if (arrowsGameObjects[i] is not null)
+                    arrowsGameObjects[i].transform.position = realtimeRD.arrowsPositions[i];
             }
         }
 
+
+        private void CreateEnvironment()
+        {
+            foreach (var wallPos in staticRD.wallsPositions)
+            {
+                walls.Add(CreateGameObject(wallPrefab, wallPos));
+                walls[walls.Count - 1].transform.SetParent(wallsParent.transform);
+            }
+
+            foreach (var floorPos in staticRD.floorsPositions)
+            {
+                floors.Add(CreateGameObject(floorPrefab, floorPos));
+                floors[floors.Count - 1].transform.SetParent(floorsParent.transform);
+            }
+        }
         private void CreateZombies()
         {
-            foreach (var zombie in zombieModels)
+            foreach (var zombieRD in realtimeRD.zombiesRD)
             {
-                zombies.Add(CreateGameObject(zombiePrefab, zombie.currentPosition));
+                zombiesGameObjects.Add(CreateGameObject(zombiePrefab, zombieRD.EnemyPosition));
             }
         }
-
         private void CreateSkeletons()
         {
-            foreach (var skeleton in skeletonModels)
+            foreach (var skeletonRD in realtimeRD.skeletonsRD)
             {
-                skeletons.Add(CreateGameObject(skeletonPrefab, skeleton.currentPosition));
+                skeletonsGameObjects.Add(CreateGameObject(skeletonPrefab, skeletonRD.EnemyPosition));
             }
         }
-
         public GameObject CreateGameObject(GameObject gameObj, Vector3 transform)
         {
             return Instantiate(gameObj, transform, Quaternion.identity);

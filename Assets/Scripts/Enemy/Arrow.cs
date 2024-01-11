@@ -1,18 +1,20 @@
 ﻿
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace MazeGame
 {
-    public class Arrow : MonoBehaviour
+    public class Arrow
     {
-        private Field field => ViewModel.instance.field;
+        private Model model => Model.inst;
 
-        [HideInInspector] public Vector3 direction { get; set; }
+        public Vector3 currentPosition;
 
-        private void OnEnable()
+        public Vector3 direction { get; set; }
+
+        public Arrow(Vector3 startPos)
         {
+            currentPosition = startPos;
             SetRandomDirection();
         }
 
@@ -29,47 +31,41 @@ namespace MazeGame
             List<Vector3> possibleArrowDirection = new();
             for (int i = 0; i < directions.Count; i++)
             {
-                Vector3 tempPos = transform.position + directions[i];
-
-                if (tempPos.x >= 0 && tempPos.z * (-1) >= 0 && tempPos.x < field.width && tempPos.z * (-1) < field.height)
+                Vector3 tempPos = currentPosition + directions[i];
+                if (tempPos.x >= 0 && tempPos.z * (-1) >= 0 && tempPos.x < model.mazeWidth && tempPos.z * (-1) < model.mazeHeight)
                 {
-                    if (field.field[(int)tempPos.x, (int)tempPos.z * (-1)].type == CellType.Floor)
+                    if (model.Field[(int)tempPos.x, (int)tempPos.z * (-1)].type == CellType.Floor)
                     {
                         possibleArrowDirection.Add(directions[i]);
                     }
                 }
             }
 
-            direction = Random.Range(0, possibleArrowDirection.Count) switch
-            {
-                0 => possibleArrowDirection[0],
-                1 => possibleArrowDirection[1],
-                2 => possibleArrowDirection[2],
-                3 => possibleArrowDirection[3],
-                _ => throw new System.NotImplementedException(),
-            };
-        }
-
-
-        private void FixedUpdate()
-        {
-            Move();
+            direction = possibleArrowDirection[Random.Range(0, possibleArrowDirection.Count)];
         }
 
         public void Move()
         {
-            transform.position += direction * 4f * Time.fixedDeltaTime;
-        }
+            Vector3 buf = currentPosition + direction/20;
 
-        private void OnCollisionEnter(Collision collision)
-        {
-            //Если игрок
-            if (collision.gameObject.layer == 7)
+            if (buf.x >= 0 && buf.z*(-1) >= 0)
             {
-                ViewModel.instance.playerModel.TakeDamage(5);
+                if (Vector3.Distance(currentPosition, model.playerCurrentPosition) < 0.05f)
+                {
+                    model.PlayerTakeDamage(5);
+                    currentPosition = new Vector3 (-1, -1, -1);
+                }
+                else if (model.Field[(int)buf.x, (int)buf.z*(-1)].type == CellType.Floor)
+                {
+                    currentPosition = buf;
+                }
+                else
+                {
+                    currentPosition = new Vector3(-1, -1, -1);
+                }
             }
+
             
-            Destroy(this.gameObject);
         }
     }
 }

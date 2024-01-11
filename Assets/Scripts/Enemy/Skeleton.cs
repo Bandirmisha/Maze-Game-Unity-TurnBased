@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 
 
 namespace MazeGame
@@ -8,7 +9,7 @@ namespace MazeGame
         private float shootCooldown { get; }
         private float time { get; set; }
 
-        public Skeleton()
+        public Skeleton(Vector3 startPos):base(startPos)
         {
             shootCooldown = 1f;
         }
@@ -29,7 +30,7 @@ namespace MazeGame
 
         public void Shoot()
         {
-            //ViewModel.instance.view.CreateGameObject(ViewModel.instance.view.arrowPrefab, currentPosition);
+            model.onSkeletonShoot.Invoke(currentPosition);
         }
 
     }
